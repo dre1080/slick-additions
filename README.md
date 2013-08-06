@@ -12,6 +12,16 @@ Based on the following links:
 ### Example Module
 
 ```scala
+package modules
+
+import com.jiffey.slick.additions._
+import com.jiffey.slick.additions.components._
+
+import play.api.Play
+import play.api.Play.current
+
+import scaldi.Module
+
 class SlickModule(dbInfo: DbInfo) extends Module {
 
   val config = Play.configuration
