@@ -11,11 +11,11 @@ import scala.slick.driver.BasicDriver.Table
 abstract class RepoTable[M <: Model[M]](val db: DatabaseComponent, name: String) extends Table[M](db.entityName(name)) {
 
   // standardizing the following columns for all entities
-  def id = column[UUID]("id", O.PrimaryKey, O.Nullable)
+  def id = column[Id[M]]("id", O.PrimaryKey, O.Nullable)
   def createdAt = column[DateTime]("created_at", O.NotNull)
   def updatedAt = column[DateTime]("updated_at", O.NotNull)
 
-  def forInsert: db.Driver.KeysInsertInvoker[M, UUID]
+  def forInsert: db.Driver.KeysInsertInvoker[M, Id[M]]
 
   def timestamp = DateTime.now
 

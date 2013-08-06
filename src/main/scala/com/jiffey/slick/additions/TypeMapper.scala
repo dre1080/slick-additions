@@ -4,6 +4,7 @@ import com.github.nscala_time.time.Imports._
 
 import java.net.InetAddress
 import java.sql.Timestamp
+import java.util.UUID
 
 import scala.language.implicitConversions
 import scala.slick.driver.BasicProfile
@@ -42,6 +43,11 @@ object TypeMapper {
     implicit val dateTimeJdbcType = MappedTypeMapper.base[DateTime, Timestamp](
       { d: DateTime => new Timestamp(d.getMillis) },
       { t: Timestamp => new DateTime(t.getTime, DateTimeZone.UTC) }
+    )
+
+    implicit def idJdbcType[M <: Model[M]] = MappedTypeMapper.base[Id[M], UUID](
+      { id: Id[M] => id.value },
+      { uuid: UUID => Id(uuid) }
     )
 
   }

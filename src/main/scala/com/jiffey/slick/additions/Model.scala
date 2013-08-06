@@ -7,9 +7,9 @@ import java.util.UUID
 
 import scala.language.reflectiveCalls
 
-abstract class Model[T] extends Cloneable {
+abstract class Model[T <: Model[T]] extends Cloneable {
 
-  val id: Option[UUID]
+  val id: Option[Id[T]]
   val createdAt: DateTime
   val updatedAt: DateTime
 
@@ -23,7 +23,7 @@ abstract class Model[T] extends Cloneable {
     declaredField.set(cloned, value)
   }
 
-  def withId(newId: Option[UUID]): T = {
+  def withId(newId: Option[Id[T]]): T = {
     setField("id", newId)
     cloned.asInstanceOf[T]
   }

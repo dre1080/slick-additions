@@ -1,5 +1,6 @@
 package com.jiffey.slick.additions
 
+import com.jiffey.slick.additions.TypeMapper.Implicits.idJdbcType
 import com.jiffey.slick.additions.session._
 
 import java.sql.SQLException
@@ -19,10 +20,10 @@ abstract class DbRepo[M <: Model[M]](implicit inj: Injector) extends Repo[M] wit
 
   def count(implicit session: ReadSession): Int = Query(table.length).first
 
-  def get(id: UUID)(implicit session: ReadSession): M =
+  def get(id: Id[M])(implicit session: ReadSession): M =
     (for(f <- table if f.id is id.bind) yield f).first
 
-  def getOption(id: UUID)(implicit session: ReadSession): Option[M] =
+  def getOption(id: Id[M])(implicit session: ReadSession): Option[M] =
     (for(f <- table if f.id is id.bind) yield f).firstOption
 
   def all()(implicit session: ReadSession): Seq[M] = table.map(t => t).list
@@ -42,7 +43,7 @@ abstract class DbRepo[M <: Model[M]](implicit inj: Injector) extends Repo[M] wit
     case t: SQLException => throw new SQLException(s"error persisting $model", t)
   }
 
-  private def insert(model: M)(implicit session: ReadWriteSession): UUID =
+  private def insert(model: M)(implicit session: ReadWriteSession): Id[M] =
     table.forInsert.insert(model)
 
   private def update(model: M)(implicit session: ReadWriteSession) = {
