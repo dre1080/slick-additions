@@ -12,23 +12,33 @@ Based on the following links:
 ### Example Module
 
 ```scala
-    class SlickModule(dbInfo: DbInfo) extends Module {
+package modules
 
-      val config = Play.configuration
+import com.jiffey.slick.additions._
+import com.jiffey.slick.additions.components._
 
-      lazy val db = dbInfo.driverName match {
-        case PostgreSQL.driverName => new PostgreSQL(dbInfo.database)
-        case MySQL.driverName => new MySQL(dbInfo.database)
-        case H2.driverName => new H2(dbInfo.database)
-        case _ => throw config.reportError(
-          dbInfo.driverName,
-          s"Slick error : Unknown jdbc driver found in application.conf: [${dbInfo.driverName}]"
-        )
-      }
+import play.api.Play
+import play.api.Play.current
 
-      bind [DatabaseComponent] to db
-      bind [SlickSessionProvider] to new SlickSessionProviderImpl
-      bind [Database] to new Database()
+import scaldi.Module
 
-    }
+class SlickModule(dbInfo: DbInfo) extends Module {
+
+  val config = Play.configuration
+
+  lazy val db = dbInfo.driverName match {
+    case PostgreSQL.driverName => new PostgreSQL(dbInfo.database)
+    case MySQL.driverName => new MySQL(dbInfo.database)
+    case H2.driverName => new H2(dbInfo.database)
+    case _ => throw config.reportError(
+      dbInfo.driverName,
+      s"Slick error : Unknown jdbc driver found in application.conf: [${dbInfo.driverName}]"
+    )
+  }
+
+  bind [DatabaseComponent] to db
+  bind [SlickSessionProvider] to new SlickSessionProviderImpl
+  bind [Database] to new Database()
+
+}
 ```
